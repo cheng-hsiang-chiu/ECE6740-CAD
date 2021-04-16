@@ -1,0 +1,12 @@
+#abc 04> read testXOR.blif 
+#Error: Currently expects a single-output miter.
+# XOR example Sep 9 2014
+.model XOR
+.inputs a0 b0
+.outputs m0 m1
+.names a0 b0 m0
+01 1
+10 1
+.names a0 b0 m1
+11 1
+.end

@@ -1,0 +1,64 @@
+digraph "DD" {
+size = "7.5,10"
+center = true;
+edge [dir = none];
+{ node [shape = plaintext];
+  edge [style = invis];
+  "CONST NODES" [style = invis];
+" A_0 " -> " A_1 " -> " B_0 " -> " B_1 " -> "CONST NODES"; 
+}
+{ rank = same; node [shape = box]; edge [style = invis];
+"  C_0  " -> "  C_1  " -> "  C_2  "; }
+{ rank = same; " A_0 ";
+"a5";
+"aa";
+"b2";
+}
+{ rank = same; " A_1 ";
+"ab";
+"a7";
+"a9";
+"b1";
+}
+{ rank = same; " B_0 ";
+"a3";
+"b0";
+"ad";
+"a8";
+}
+{ rank = same; " B_1 ";
+"a4";
+}
+{ rank = same; "CONST NODES";
+{ node [shape = box]; "9d";
+}
+}
+"  C_0  " -> "a5" [style = dotted];
+"  C_1  " -> "aa" [style = solid];
+"  C_2  " -> "b2" [style = solid];
+"a5" -> "a3";
+"a5" -> "a3" [style = dotted];
+"aa" -> "a9";
+"aa" -> "a7" [style = dotted];
+"b2" -> "b1";
+"b2" -> "ab" [style = dashed];
+"ab" -> "a4";
+"ab" -> "9d" [style = dotted];
+"a7" -> "a4";
+"a7" -> "a4" [style = dotted];
+"a9" -> "a8";
+"a9" -> "a8" [style = dotted];
+"b1" -> "b0";
+"b1" -> "ad" [style = dashed];
+"a3" -> "9d";
+"a3" -> "9d" [style = dotted];
+"b0" -> "9d";
+"b0" -> "a4" [style = dashed];
+"ad" -> "a4";
+"ad" -> "9d" [style = dotted];
+"a8" -> "a4";
+"a8" -> "a4" [style = dotted];
+"a4" -> "9d";
+"a4" -> "9d" [style = dotted];
+"9d" [label = "1"];
+}

@@ -1,0 +1,556 @@
+%!PS-Adobe-2.0
+%%Creator: dot version gviz 1.7.3b (Mon Feb 26 14:10:22 EST 2001)
+%%For: (zzeng) Zhihong Zeng
+%%Title: DD
+%%Pages: (atend)
+%%BoundingBox: 115 190 498 603
+%%EndComments
+%%BeginProlog
+save
+/DotDict 200 dict def
+DotDict begin
+
+%%BeginResource: procset
+/coord-font-family /Times-Roman def
+/default-font-family /Times-Roman def
+/coordfont coord-font-family findfont 8 scalefont def
+
+/InvScaleFactor 1.0 def
+/set_scale {
+	dup 1 exch div /InvScaleFactor exch def
+	dup scale
+} bind def
+
+% styles
+/solid { } bind def
+/dashed { [9 InvScaleFactor mul dup ] 0 setdash } bind def
+/dotted { [1 InvScaleFactor mul 6 InvScaleFactor mul] 0 setdash } bind def
+/invis {/fill {newpath} def /stroke {newpath} def /show {pop newpath} def} bind def
+/bold { 2 setlinewidth } bind def
+/filled { } bind def
+/unfilled { } bind def
+/rounded { } bind def
+/diagonals { } bind def
+
+% hooks for setting color 
+/nodecolor { sethsbcolor } bind def
+/edgecolor { sethsbcolor } bind def
+/graphcolor { sethsbcolor } bind def
+/nopcolor {pop pop pop} bind def
+
+/beginpage {	% i j npages
+	/npages exch def
+	/j exch def
+	/i exch def
+	/str 10 string def
+	npages 1 gt {
+		gsave
+			coordfont setfont
+			0 0 moveto
+			(\() show i str cvs show (,) show j str cvs show (\)) show
+		grestore
+	} if
+} bind def
+
+/set_font {
+	findfont exch
+	scalefont setfont
+} def
+
+% draw aligned label in bounding box aligned to current point
+% alignfactor tells what fraction to place on the left.
+% -.5 is centered.
+/alignedtext {			% text labelwidth fontsz alignfactor
+	/alignfactor exch def
+	/fontsz exch def
+	/width exch def
+	/text exch def
+	gsave
+		% even if node or edge is dashed, don't paint text with dashes
+		[] 0 setdash
+		currentpoint newpath moveto
+		text stringwidth pop
+		alignfactor mul fontsz -.3 mul rmoveto
+		text show
+	grestore
+} def
+
+/boxprim {				% xcorner ycorner xsize ysize
+		4 2 roll
+		moveto
+		2 copy
+		exch 0 rlineto
+		0 exch rlineto
+		pop neg 0 rlineto
+		closepath
+} bind def
+
+/ellipse_path {
+	/ry exch def
+	/rx exch def
+	/y exch def
+	/x exch def
+	matrix currentmatrix
+	newpath
+	x y translate
+	rx ry scale
+	0 0 1 0 360 arc
+	setmatrix
+} bind def
+
+/endpage { showpage } bind def
+
+/layercolorseq
+	[	% layer color sequence - darkest to lightest
+		[0 0 0]
+		[.2 .8 .8]
+		[.4 .8 .8]
+		[.6 .8 .8]
+		[.8 .8 .8]
+	]
+def
+
+/setlayer {/maxlayer exch def /curlayer exch def
+	layercolorseq curlayer get
+	aload pop sethsbcolor
+	/nodecolor {nopcolor} def
+	/edgecolor {nopcolor} def
+	/graphcolor {nopcolor} def
+} bind def
+
+/onlayer { curlayer ne {invis} if } def
+
+/onlayers {
+	/myupper exch def
+	/mylower exch def
+	curlayer mylower lt
+	curlayer myupper gt
+	or
+	{invis} if
+} def
+
+/curlayer 0 def
+
+%%EndProlog
+%%BeginSetup
+14 default-font-family set_font
+1 setmiterlimit
+% /arrowlength 10 def
+% /arrowwidth 5 def
+
+% make sure pdfmark is harmless for PS-interpreters other than Distiller
+/pdfmark where {pop} {userdict /pdfmark /cleartomark load put} ifelse
+% make '<<' and '>>' safe on PS Level 1 devices
+/languagelevel where {pop languagelevel}{1} ifelse
+2 lt {
+    userdict (<<) cvn ([) cvn load put
+    userdict (>>) cvn ([) cvn load put
+} if
+
+%%EndResource
+%%EndSetup
+%%Page: 1 1
+%%PageBoundingBox: 115 190 498 603
+%%PageOrientation: Portrait
+gsave
+114 189 384 414 boxprim clip newpath
+115 190 translate
+0 0 1 beginpage
+0 0 translate 0 rotate
+[ /CropBox [115 190 498 603] /PAGES pdfmark
+0.000 0.000 0.000 graphcolor
+14.00 /Times-Roman set_font
+
+%	CONST NODES
+gsave 10 dict begin
+invis
+gsave 10 dict begin
+55 27 moveto (CONST NODES) 96 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	 A_0 
+gsave 10 dict begin
+gsave 10 dict begin
+55 315 moveto ( A_0 ) 31 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	 B_0 
+gsave 10 dict begin
+gsave 10 dict begin
+55 243 moveto ( B_0 ) 30 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	 A_0  ->  B_0 
+gsave 10 dict begin
+invis
+newpath 55 296 moveto
+55 285 55 271 55 260 curveto
+stroke
+end grestore
+
+%	 A_1 
+gsave 10 dict begin
+gsave 10 dict begin
+55 171 moveto ( A_1 ) 31 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	 B_0  ->  A_1 
+gsave 10 dict begin
+invis
+newpath 55 224 moveto
+55 213 55 199 55 188 curveto
+stroke
+end grestore
+
+%	 B_1 
+gsave 10 dict begin
+gsave 10 dict begin
+55 99 moveto ( B_1 ) 30 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	 A_1  ->  B_1 
+gsave 10 dict begin
+invis
+newpath 55 152 moveto
+55 141 55 127 55 116 curveto
+stroke
+end grestore
+
+%	 B_1  -> CONST NODES
+gsave 10 dict begin
+invis
+newpath 55 80 moveto
+55 69 55 55 55 44 curveto
+stroke
+end grestore
+
+%	  C_0  
+gsave 10 dict begin
+newpath 154 404 moveto
+100 404 lineto
+100 368 lineto
+154 368 lineto
+closepath
+stroke
+gsave 10 dict begin
+127 387 moveto (  C_0  ) 37 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	  C_1  
+gsave 10 dict begin
+newpath 241 404 moveto
+187 404 lineto
+187 368 lineto
+241 368 lineto
+closepath
+stroke
+gsave 10 dict begin
+214 387 moveto (  C_1  ) 37 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	  C_0   ->   C_1  
+gsave 10 dict begin
+invis
+newpath 154 386 moveto
+165 386 176 386 187 386 curveto
+stroke
+end grestore
+
+%	60
+gsave 10 dict begin
+127 314 27 18 ellipse_path
+stroke
+gsave 10 dict begin
+127 315 moveto (60) 14 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	  C_0   -> 60
+gsave 10 dict begin
+dotted
+newpath 127 368 moveto
+127 357 127 343 127 332 curveto
+stroke
+end grestore
+
+%	  C_2  
+gsave 10 dict begin
+newpath 327 404 moveto
+273 404 lineto
+273 368 lineto
+327 368 lineto
+closepath
+stroke
+gsave 10 dict begin
+300 387 moveto (  C_2  ) 37 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	  C_1   ->   C_2  
+gsave 10 dict begin
+invis
+newpath 241 386 moveto
+252 386 262 386 273 386 curveto
+stroke
+end grestore
+
+%	65
+gsave 10 dict begin
+214 314 27 18 ellipse_path
+stroke
+gsave 10 dict begin
+214 315 moveto (65) 14 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	  C_1   -> 65
+gsave 10 dict begin
+solid
+newpath 214 368 moveto
+214 357 214 343 214 332 curveto
+stroke
+end grestore
+
+%	6d
+gsave 10 dict begin
+300 314 27 18 ellipse_path
+stroke
+gsave 10 dict begin
+300 315 moveto (6d) 14 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	  C_2   -> 6d
+gsave 10 dict begin
+solid
+newpath 300 368 moveto
+300 357 300 343 300 332 curveto
+stroke
+end grestore
+
+%	63
+gsave 10 dict begin
+347 242 27 18 ellipse_path
+stroke
+gsave 10 dict begin
+347 243 moveto (63) 14 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	6d -> 63
+newpath 311 297 moveto
+319 286 329 270 336 259 curveto
+stroke
+
+%	6c
+gsave 10 dict begin
+283 170 27 18 ellipse_path
+stroke
+gsave 10 dict begin
+283 171 moveto (6c) 13 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	6d -> 6c
+gsave 10 dict begin
+dashed
+newpath 298 296 moveto
+294 268 288 216 285 188 curveto
+stroke
+end grestore
+
+%	5e
+gsave 10 dict begin
+127 242 27 18 ellipse_path
+stroke
+gsave 10 dict begin
+127 243 moveto (5e) 13 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	60 -> 5e
+newpath 121 296 moveto
+120 285 120 271 121 260 curveto
+stroke
+
+%	60 -> 5e
+gsave 10 dict begin
+dotted
+newpath 133 296 moveto
+134 285 134 271 133 260 curveto
+stroke
+end grestore
+
+%	67
+gsave 10 dict begin
+237 242 27 18 ellipse_path
+stroke
+gsave 10 dict begin
+237 243 moveto (67) 14 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	65 -> 67
+newpath 220 296 moveto
+223 285 228 271 231 260 curveto
+stroke
+
+%	6f
+gsave 10 dict begin
+211 170 27 18 ellipse_path
+stroke
+gsave 10 dict begin
+211 171 moveto (6f) 11 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	65 -> 6f
+gsave 10 dict begin
+dotted
+newpath 208 296 moveto
+204 285 200 270 198 260 curveto
+194 240 201 208 206 188 curveto
+stroke
+end grestore
+
+%	67 -> 6f
+newpath 225 226 moveto
+220 214 215 200 212 188 curveto
+stroke
+
+%	67 -> 6f
+gsave 10 dict begin
+dotted
+newpath 236 224 moveto
+233 213 228 198 223 187 curveto
+stroke
+end grestore
+
+%	58
+gsave 10 dict begin
+newpath 246 44 moveto
+192 44 lineto
+192 8 lineto
+246 8 lineto
+closepath
+stroke
+gsave 10 dict begin
+219 27 moveto (1) 7 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	5e -> 58
+newpath 127 224 moveto
+133 191 154 119 171 80 curveto
+175 69 185 55 196 44 curveto
+stroke
+
+%	5e -> 58
+gsave 10 dict begin
+dotted
+newpath 137 225 moveto
+150 192 172 119 189 80 curveto
+193 69 203 55 211 44 curveto
+stroke
+end grestore
+
+%	6b
+gsave 10 dict begin
+355 170 27 18 ellipse_path
+stroke
+gsave 10 dict begin
+355 171 moveto (6b) 14 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	63 -> 6b
+newpath 349 224 moveto
+350 213 352 199 353 188 curveto
+stroke
+
+%	63 -> 6c
+gsave 10 dict begin
+dashed
+newpath 333 226 moveto
+322 214 307 197 297 185 curveto
+stroke
+end grestore
+
+%	5f
+gsave 10 dict begin
+219 98 27 18 ellipse_path
+stroke
+gsave 10 dict begin
+219 99 moveto (5f) 11 14.00 -0.50 alignedtext
+end grestore
+end grestore
+
+%	6b -> 5f
+gsave 10 dict begin
+dashed
+newpath 334 159 moveto
+309 146 266 123 240 109 curveto
+stroke
+end grestore
+
+%	6b -> 58
+newpath 342 154 moveto
+326 134 298 99 280 80 curveto
+270 70 254 55 241 44 curveto
+stroke
+
+%	6c -> 5f
+newpath 269 154 moveto
+258 142 243 125 233 113 curveto
+stroke
+
+%	6c -> 58
+gsave 10 dict begin
+dotted
+newpath 279 152 moveto
+274 131 266 98 258 80 curveto
+255 74 243 57 233 44 curveto
+stroke
+end grestore
+
+%	6f -> 5f
+newpath 207 152 moveto
+207 141 209 127 211 116 curveto
+stroke
+
+%	6f -> 5f
+gsave 10 dict begin
+dotted
+newpath 219 153 moveto
+221 142 223 127 223 116 curveto
+stroke
+end grestore
+
+%	5f -> 58
+newpath 213 80 moveto
+212 69 212 55 213 44 curveto
+stroke
+
+%	5f -> 58
+gsave 10 dict begin
+dotted
+newpath 225 80 moveto
+226 69 226 55 225 44 curveto
+stroke
+end grestore
+endpage
+grestore
+%%PageTrailer
+%%EndPage: 1
+%%Trailer
+%%Pages: 1
+end
+restore
+%%EOF
