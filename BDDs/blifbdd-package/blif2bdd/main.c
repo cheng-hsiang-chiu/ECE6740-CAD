@@ -6,7 +6,7 @@
 #include "cudd.h"
 #include "bnet.h"
 #include "ntr.h"
-
+#include <stdio.h>
 
 /*---------------------------------------------------------------------------*/
 /* Constant declarations */
@@ -44,9 +44,14 @@ static DdManager *startCudd ARGS ((NtrOptions * option, int nvars));
 static int ntrReadTree ARGS ((DdManager * dd, char *treefile, int nvars));
 static void DynamicReordering ARGS ((DdManager *dd));
 
-	int
-main (int argc, char **argv)
-{
+char** simulated_annealing(char** curr_order, int num_pis);
+static double temperature = 0.0;
+static double FROZEN_TEMPERATURE = 10000.0;
+static double ratio = 0.95;
+
+
+
+int main (int argc, char **argv) {
 	NtrOptions *option;
 	BnetNetwork *net;
 	DdManager *manager;
@@ -89,10 +94,13 @@ main (int argc, char **argv)
 		(void) fprintf (stdout, "\n End of Boolean Network");
 	}
 
-	PIs = net->inputs;
+  //sa(net->inputs, net->ninputs);
+
+  PIs = net->inputs;
 	fprintf (stdout, "\nPI are: \n");
 	for (i = 0; i < net->ninputs; i++) { fprintf (stdout, "\n\t%s\n", PIs[i]);
 	}
+
 
 	/* Contruct the BDD structure */
 	/* Initialize manager. We start with 0 variables, because
@@ -162,6 +170,7 @@ main (int argc, char **argv)
 	(void) Bnet_FreeNetwork (net);
 	(void) Cudd_Quit (manager);
 
+  
 	/* print running statistics */
 	/* (void) printf("total time = %s\n",
 	   util_print_time(util_cpu_time() - option->initialTime));
@@ -171,6 +180,28 @@ main (int argc, char **argv)
 
 	return 1;
 }
+
+
+/*
+ * simulated annealing algorithm 
+ */
+
+char** simulated_annealing(char** curr_order, int num_pis) {
+	fprintf (stdout, "\n in SA: \n");
+	for (int i = 0; i < num_pis; i++) { 
+    fprintf (stdout, "\n\t%s\n", curr_order[i]);
+	}
+  
+	fprintf (stdout, "\n in SA, after re-ordering: \n");
+  curr_order[0] = "b";
+  curr_order[1] = "c";
+  curr_order[2] = "d";
+  curr_order[3] = "a";
+
+  return curr_order;
+}
+
+
 
 
 /*---------------------------------------------------------------------------*/
@@ -1287,7 +1318,8 @@ startCudd (
 	dd->populationSize = option->populationSize;
 	dd->numberXovers = option->numberXovers;
 	result = ntrReadTree (dd, option->treefile, nvars);
-	if (result == 0)
+
+  if (result == 0)
 	{
 		Cudd_Quit (dd);
 		return (NULL);
