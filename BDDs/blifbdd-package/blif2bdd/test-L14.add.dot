@@ -10,15 +10,14 @@ edge [dir = none];
 { rank = same; node [shape = box]; edge [style = invis];
 "  f  "; }
 { rank = same; " a ";
-"0x58" [label="a"];
+"0x57" [label="a"];
 }
 { rank = same; " b ";
-"0x4d" [label="b"];
-"0x57" [label="b"];
+"0x56" [label="b"];
 }
 { rank = same; " c ";
 "0x4e" [label="c"];
-"0x56" [label="c"];
+"0x55" [label="c"];
 }
 { rank = same; " d ";
 "0x4f" [label="d"];
@@ -27,17 +26,15 @@ edge [dir = none];
 { node [shape = box]; "0x48";
 }
 }
-"  f  " -> "0x58" [style = solid];
-"0x58" -> "0x4d";
-"0x58" -> "0x57" [style = dashed];
-"0x4d" -> "0x48";
-"0x4d" -> "0x48" [style = dotted];
-"0x57" -> "0x56";
-"0x57" -> "0x4e" [style = dashed];
+"  f  " -> "0x57" [style = solid];
+"0x57" -> "0x4f";
+"0x57" -> "0x56" [style = dashed];
+"0x56" -> "0x55";
+"0x56" -> "0x4e" [style = dashed];
 "0x4e" -> "0x48";
 "0x4e" -> "0x48" [style = dotted];
-"0x56" -> "0x48";
-"0x56" -> "0x4f" [style = dashed];
+"0x55" -> "0x48";
+"0x55" -> "0x4f" [style = dashed];
 "0x4f" -> "0x48";
 "0x4f" -> "0x48" [style = dotted];
 "0x48" [label = "1"];

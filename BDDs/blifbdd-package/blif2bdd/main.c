@@ -151,6 +151,12 @@ main (int argc, char **argv)
 	//string1[strlen(string1)-5] = 0;
 	strcat(string1, ".add.dot");
 	//strcat(string1, ".dot");
+	
+	// ECE/CS 5740/6740 -- Counting BDD size (added 04/19/2021 by Cunxi Yu)
+        int mysize;
+	mysize = Cudd_ReadNodeCount(manager);
+        fprintf(stdout, "size: %8d\n", mysize);	
+	// ECE/CS 5740/6740 -- Counting BDD size (added 04/19/2021 by Cunxi Yu) end
 	Bnet_bddDump (manager, net, string1, 0, 0);
 
 	(void) Bnet_FreeNetwork (net);
@@ -1393,15 +1399,9 @@ DynamicReordering(
 	//fprintf (stdout, "reordering approach (1..17): "); fflush(stdout);
 	//fgets (row, DDDMPTEST_MAX_STRING_LENGTH, stdin);
 	sscanf ("1", "%d", (int *) &approach);
-
-	Cudd_ReduceHeap(dd,approach,5);
-        fprintf (stdout, "\n >> BDD size: %d ", dd->size); fflush(stdout);
-
-
-	nReordering = Cudd_ReadReorderings( dd);
-	tReorderingTime = Cudd_ReadReorderingTime( dd);
-	fprintf(stdout, "\nTotal number of reorderings occured: %d.", nReordering);
-	fprintf(stdout, "\nTotal time spent on reordering: %d seconds.", nReordering);
+        int result;
+	result = dd->keys - dd->isolated;
+        Cudd_ReduceHeap(dd,approach,1);
 	return;
 }
 
