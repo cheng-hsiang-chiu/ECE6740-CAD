@@ -4,7 +4,7 @@
 
 .SUFFIXES: .o .c .u
 
-CC      = gcc
+CC      = g++
 #CC     = cc
 RANLIB  = ranlib
 #RANLIB = :
@@ -37,6 +37,7 @@ XFLAGS 	=  -malign-double -DHAVE_IEEE_754
 
 ICFLAGS = -g $(XFLAGS)
 ICFLAGS = -O6 $(XFLAGS)
+ICFLAGS = -std=c++17
 
 $(TARGET): $(SRC) $(OBJ)
 	$(CC) $(ICFLAGS) -I$(INCLUDE) -o $@ $(OBJ) $(LIBS) -lm

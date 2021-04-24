@@ -7,6 +7,13 @@
 #include "bnet.h"
 #include "ntr.h"
 #include <stdio.h>
+#include <limits.h>
+#include <algorithm>
+#include <vector>
+#include <string>
+#include <random>
+
+
 
 /*---------------------------------------------------------------------------*/
 /* Constant declarations */
@@ -45,12 +52,451 @@ static int ntrReadTree ARGS ((DdManager * dd, char *treefile, int nvars));
 static void DynamicReordering ARGS ((DdManager *dd));
 
 char** simulated_annealing(char** curr_order, int num_pis);
-static double temperature = 0.0;
-static double FROZEN_TEMPERATURE = 10000.0;
-static double ratio = 0.95;
+static double TEMPERATURE = 10000.0;
+static double FROZEN_TEMPERATURE = 0.1;
+static double DEGRADE = 0.99;
+static int MAX_ITERATION_PER_TEMPERATURE = 1000;
+
+void initialize(
+  int argc, 
+  char** argv, 
+  std::vector<std::string>& best_ordering,
+  std::vector<std::string>& curr_ordering,
+  std::vector<std::string>& prop_ordering,
+  int& best_node_size,
+  int& curr_node_size);
+
+int calculate_node_size(
+  int argc, 
+  char** argv,
+  std::vector<std::string>& prop_ordering);
+
+void generate_prop_ordering(
+  std::vector<std::string>& prop_ordering);
+
+
+void swap_two_ordering(
+  std::vector<std::string>& prop_ordering);
+
+
+void rotate_ordering(
+  std::vector<std::string>& prop_ordering);
+
+void swap_half_half(
+  std::vector<std::string>& prop_ordering);
+
+
+int main (int argc, char** argv) {
+  std::vector<std::string> best_ordering;
+  std::vector<std::string> curr_ordering;
+  std::vector<std::string> prop_ordering;
+  std::vector<int> nodes_history;
+
+  int best_node_size;
+  int curr_node_size;
+  int prop_node_size;
+  int cost;
+
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_real_distribution<> dis(0, 1.0);
+
+  initialize(
+    argc, 
+    argv, 
+    best_ordering,
+    curr_ordering,
+    prop_ordering,
+    best_node_size,
+    curr_node_size);
+
+
+  while(TEMPERATURE > FROZEN_TEMPERATURE) {
+    for (int iter = 0; iter < MAX_ITERATION_PER_TEMPERATURE; ++iter) { 
+
+      generate_prop_ordering(prop_ordering);
+      prop_node_size = calculate_node_size(argc, argv, prop_ordering);
+
+      cost = prop_node_size - curr_node_size;
+
+      nodes_history.emplace_back(curr_node_size);
+      
+      if (cost < 0) {
+        curr_ordering = prop_ordering;
+        curr_node_size = prop_node_size;
+        //nodes_history.emplace_back(prop_node_size);      
+        if (prop_node_size < best_node_size) {
+          best_ordering = prop_ordering;
+          best_node_size = prop_node_size;
+        }
+      }
+      else {
+        auto prob = std::exp(-cost/TEMPERATURE);
+
+        if (prob > dis(gen)) {
+          curr_ordering = prop_ordering;
+          curr_node_size = prop_node_size;
+          //nodes_history.emplace_back(prop_node_size);
+        }
+      }
+    }
+
+    TEMPERATURE *= DEGRADE;
+  }
+
+
+  fprintf(stdout, "THE BEST ORDERING IS :\n");
+  for (int i = 0; i < best_ordering.size(); ++i) {
+    fprintf(stdout, " %s ", best_ordering[i].c_str());
+  }
+
+  fprintf(stdout, "\n\nTHE BEST NODE SIZE IS : %d\n", best_node_size);
+
+  FILE* fpp;
+  fpp = fopen("./node_history.txt", "w+");
+  for (int i = 0; i < nodes_history.size(); ++i) {
+    fprintf(fpp, "%d\n", nodes_history[i]);
+  }
+  fclose(fpp);
+
+  return 0;
+}
 
 
 
+// strategy 1 : Swap two variables
+void swap_two_ordering(
+  std::vector<std::string>& prop_ordering) {
+  
+  int a = std::rand()%(prop_ordering.size());
+  int b = std::rand()%(prop_ordering.size());
+
+  while (a == b) {
+    b = std::rand()%(prop_ordering.size());
+  }
+
+  std::swap(prop_ordering[a], prop_ordering[b]);
+}
+
+
+
+void swap_half_half(
+  std::vector<std::string>& prop_ordering) {
+
+  for (size_t i = 0; i < prop_ordering.size()/2; ++i) {
+    std::swap(prop_ordering[i], 
+              prop_ordering[i + (prop_ordering.size() + 1) / 2]);
+  }
+}
+
+
+
+void rotate_ordering(
+  std::vector<std::string>& prop_ordering) {
+
+  //std::cout << "reverse ordering\n";
+  std::reverse(prop_ordering.begin(), prop_ordering.end());  
+}
+
+
+// Generate proposed ordering
+void generate_prop_ordering(
+  std::vector<std::string>& prop_ordering) {
+
+  switch(std::rand()%2) {
+    case 0:
+      swap_two_ordering(prop_ordering);
+      break;
+
+    case 1:
+      rotate_ordering(prop_ordering);
+      break;
+
+    case 2:
+      swap_half_half(prop_ordering);
+      break; 
+  }
+}
+
+
+// Initialize basic parameters
+void initialize(
+  int argc, 
+  char** argv,
+  std::vector<std::string>& best_ordering,
+  std::vector<std::string>& curr_ordering,
+  std::vector<std::string>& prop_ordering,
+  int& best_node_size,
+  int& curr_node_size) {
+
+	DdManager *manager;
+  NtrOptions *option;
+  BnetNetwork *net;
+  char *blif_file = NULL;	
+  FILE *fp;
+  int pr = 1;
+  int result = 0;
+  int node_size = 0;
+
+  if (argc < 2) {
+    fprintf (stderr, "\tUsage: %s [-order file] blif_file\n", argv[0]);
+    fprintf (stderr, "\tLook at example order file inside test/\n");
+    exit (-1);
+  }
+
+  // Initialize 
+  option = mainInit ();
+  // Read options from command line
+  ntrReadOptions (argc, argv, option);	 
+  blif_file = option->file1;
+
+  // Read the boolean network from the BLIF file 
+  if ((fp = fopen (option->file1, "r")) == NULL) {
+    fprintf(stderr, "\nCan not open file %s.", blif_file);
+    exit (-2);
+  }
+
+  net = Bnet_ReadNetwork (fp, pr);
+    
+  (void) fclose (fp);
+    
+  if (net == NULL) {
+    (void) fprintf (stderr, "Syntax error in %s.\n", blif_file);
+    exit (2);
+  }
+    
+  if (pr > 2) {
+    (void) fprintf (stdout, "\n Boolean Network:");
+    (void) Bnet_PrintNetwork (net);
+    (void) fprintf (stdout, "\n End of Boolean Network");
+  }
+	
+  best_ordering.resize(net->ninputs);
+  curr_ordering.resize(net->ninputs);
+  prop_ordering.resize(net->ninputs); 
+
+  for (int i = 0; i < net->ninputs; ++i) {
+    best_ordering[i] = net->inputs[i];
+    curr_ordering[i] = net->inputs[i];
+    prop_ordering[i] = net->inputs[i];
+  }
+
+  // Contruct the BDD structure 
+  manager = startCudd (option, net->ninputs);
+  
+  if (manager == NULL) {
+    exit (-1);
+  }
+
+  result = Ntr_buildDDs (net, manager, option, NULL);
+  
+  if (result == 0) {
+    fprintf (stderr, "Cannot build DD from the BNetwork");
+    exit (-1);
+  }
+
+  best_node_size = Cudd_ReadNodeCount(manager);
+  curr_node_size = best_node_size;
+
+  (void) Bnet_FreeNetwork (net);
+  (void) Cudd_Quit (manager);
+}
+
+
+/*
+int main (int argc, char **argv) {
+  int count = 2;
+  int minimum_node_size = INT_MAX;
+  std::vector<std::string> best_ordering;
+  //int num_variables = 0;
+  bool is_init = true;
+  
+  while (count > 0) { 
+	  DdManager *manager;
+    NtrOptions *option;
+    BnetNetwork *net;
+    char *blif_file = NULL;	
+    FILE *fp;
+    int pr = 1;
+    int result = 0;
+    int node_size = 0;
+
+    if (argc < 2) {
+      fprintf (stderr, "\tUsage: %s [-order file] blif_file\n", argv[0]);
+      fprintf (stderr, "\tLook at example order file inside test/\n");
+      exit (-1);
+    }
+
+    // Initialize 
+    option = mainInit ();
+    // Read options from command line
+    ntrReadOptions (argc, argv, option);	 
+    blif_file = option->file1;
+
+    // Read the boolean network from the BLIF file 
+    if ((fp = fopen (option->file1, "r")) == NULL) {
+      fprintf(stderr, "\nCan not open file %s.", blif_file);
+      exit (-2);
+    }
+
+    net = Bnet_ReadNetwork (fp, pr);
+    
+    (void) fclose (fp);
+    
+    if (net == NULL) {
+      (void) fprintf (stderr, "Syntax error in %s.\n", blif_file);
+      exit (2);
+    }
+    
+    if (pr > 2) {
+      (void) fprintf (stdout, "\n Boolean Network:");
+      (void) Bnet_PrintNetwork (net);
+      (void) fprintf (stdout, "\n End of Boolean Network");
+    }
+	 
+    if (is_init) {
+      //num_variables = net->ninputs;
+      best_ordering.resize(net->ninputs);
+      is_init = false;
+    }
+    if (!is_init) {
+      std::swap(net->inputs[0], net->inputs[1]);
+      std::swap(net->inputs[2], net->inputs[3]);
+    }
+    
+    fprintf (stdout, "\nPI are: ");
+    
+    for (int i = 0; i < net->ninputs; i++) { 
+      fprintf (stdout, " %s ", net->inputs[i]);
+    }
+    fprintf(stdout, "\n");
+
+    // Contruct the BDD structure 
+  
+    manager = startCudd (option, net->ninputs);
+    
+    if (manager == NULL) {
+      exit (-1);
+    }
+
+    result = Ntr_buildDDs (net, manager, option, NULL);
+    
+    if (result == 0) {
+      fprintf (stderr, "Cannot build DD from the BNetwork");
+      exit (-1);
+    }
+
+    node_size = Cudd_ReadNodeCount(manager);
+    fprintf(stdout, "size: %8d\n", node_size);	
+    // Counting BDD size (added 04/19/2021 by Cunxi Yu) end
+    //Bnet_bddDump (manager, net, string1, 0, 0);
+
+    if (node_size < minimum_node_size) {
+      minimum_node_size = node_size;
+      for (int i = 0; i < net->ninputs; ++i) {
+        best_ordering[i] = net->inputs[i];
+      }
+      //best_ordering = net->inputs;
+    }
+
+    (void) Bnet_FreeNetwork (net);
+    (void) Cudd_Quit (manager);
+    --count;
+  }
+  
+  fprintf (stdout, "\n\nOptimal variable ordering are: ");
+    
+  for (int i = 0; i < best_ordering.size(); i++) { 
+    fprintf(stdout, " %s ", best_ordering[i].c_str());
+  }
+
+  fprintf(stdout, "\n");
+  fprintf(stdout, "The number of nodes of the variable order is: %d\n", minimum_node_size);
+  
+  return 0;
+}
+*/
+
+// Calculate the node size given an ordering
+int calculate_node_size(
+  int argc, char **argv,
+  std::vector<std::string>& prop_ordering) {
+
+  DdManager *manager;
+  NtrOptions *option;
+  BnetNetwork *net;
+  char *blif_file = NULL;	
+  FILE *fp;
+  int pr = 1;
+  int result = 0;
+  int node_size = 0;
+
+  // Initialize 
+  option = mainInit ();
+  // Read options from command line
+  ntrReadOptions (argc, argv, option);	 
+  blif_file = option->file1;
+
+  // Read the boolean network from the BLIF file 
+  if ((fp = fopen (option->file1, "r")) == NULL) {
+    fprintf(stderr, "\nCan not open file %s.", blif_file);
+    exit (-2);
+  }
+
+  net = Bnet_ReadNetwork (fp, pr);
+  
+  (void) fclose (fp);
+  
+  if (net == NULL) {
+    (void) fprintf (stderr, "Syntax error in %s.\n", blif_file);
+    exit (2);
+  }
+  
+  if (pr > 2) {
+    (void) fprintf (stdout, "\n Boolean Network:");
+    (void) Bnet_PrintNetwork (net);
+    (void) fprintf (stdout, "\n End of Boolean Network");
+  }
+
+  for (int i = 0; i < prop_ordering.size(); ++i) {
+    net->inputs[i] = const_cast<char*>(prop_ordering[i].c_str());
+  }
+
+  fprintf (stdout, "\nPI are: ");
+  
+  for (int i = 0; i < net->ninputs; i++) { 
+    fprintf (stdout, " %s ", net->inputs[i]);
+  }
+  fprintf(stdout, "\n");
+
+  // Contruct the BDD structure 
+
+  manager = startCudd (option, net->ninputs);
+  
+  if (manager == NULL) {
+    exit (-1);
+  }
+
+  result = Ntr_buildDDs (net, manager, option, NULL);
+  
+  if (result == 0) {
+    fprintf (stderr, "Cannot build DD from the BNetwork");
+    exit (-1);
+  }
+
+  node_size = Cudd_ReadNodeCount(manager);
+  fprintf(stdout, "size: %8d\n", node_size);	
+  // Counting BDD size (added 04/19/2021 by Cunxi Yu) end
+  //Bnet_bddDump (manager, net, string1, 0, 0);
+
+  (void) Bnet_FreeNetwork (net);
+  (void) Cudd_Quit (manager);
+
+  return node_size;
+}
+
+
+/*
 int main (int argc, char **argv) {
 	NtrOptions *option;
 	BnetNetwork *net;
@@ -65,6 +511,7 @@ int main (int argc, char **argv) {
 
 	char **PIs;
 
+  
 	if (argc < 2)
 	{
 		fprintf (stderr, "\tUsage: %s [-order file] blif_file\n", argv[0]);
@@ -72,12 +519,12 @@ int main (int argc, char **argv) {
 		exit (-1);
 	}
 
-	/* Initialize */
+	// Initialize 
 	option = mainInit ();
-	ntrReadOptions (argc, argv, option);	/* read options from command line */
+	ntrReadOptions (argc, argv, option);	// read options from command line 
 	blif_file = option->file1;
 
-	/* Read the boolean network from the BLIF file */
+	// Read the boolean network from the BLIF file //
 	if ((fp = fopen (option->file1, "r")) == NULL) {
 		fprintf(stderr, "\nCan not open file %s.", blif_file);
 		exit (-2);
@@ -94,6 +541,7 @@ int main (int argc, char **argv) {
 		(void) fprintf (stdout, "\n End of Boolean Network");
 	}
 
+  
   //sa(net->inputs, net->ninputs);
 
   PIs = net->inputs;
@@ -102,11 +550,11 @@ int main (int argc, char **argv) {
 	}
 
 
-	/* Contruct the BDD structure */
-	/* Initialize manager. We start with 0 variables, because
-	   Ntr_buildDDs will create new variables rather than using
-	   whatever already exists.
-	   */
+	// Contruct the BDD structure 
+	// Initialize manager. We start with 0 variables, because
+	//   Ntr_buildDDs will create new variables rather than using
+	//   whatever already exists.
+	
 	manager = startCudd (option, net->ninputs);
 	if (manager == NULL) {
 		exit (-1);
@@ -119,8 +567,8 @@ int main (int argc, char **argv) {
 	}
 
 
-	/** Ordering **/
-	/* Show Cudd_reordering status */
+	// Ordering 
+	// Show Cudd_reordering status 
 	//method = (Cudd_ReorderingType *) malloc( sizeof(Cudd_ReorderingType));
 	//reorder = CUDD_REORDER_SIFT;
 	// CUDD_REORDER_SIFT_CONVERGE;
@@ -133,7 +581,7 @@ int main (int argc, char **argv) {
 	if (option->ordering != PI_PS_GIVEN)
 		DynamicReordering( manager);
 
-	/** Dump BDD **/
+	// Dump BDD
 	//fp = fopen("dump.dot", "w");
 	//result = Cudd_DumpDot( manager, net->npos,
 	//Bnet_bddDump (manager, net, "dump.dot.reorder", 0, 0);
@@ -145,7 +593,7 @@ int main (int argc, char **argv) {
 	// Bnet_PrintOrder( net, manager);
 	//Bnet_bddDump( manager, net, "dump1.dot", 0, 0);
 
-	/* Read ordering from file */
+	// Read ordering from file 
 	//   Bnet_ReadOrder( manager, "s27.ord", net, 1, 1); // 0: which kind of bdd 1:
 	strcat(string1, "");
 	strcat(string1, blif_file);
@@ -161,9 +609,9 @@ int main (int argc, char **argv) {
 	//strcat(string1, ".dot");
 	
 	// ECE/CS 5740/6740 -- Counting BDD size (added 04/19/2021 by Cunxi Yu)
-        int mysize;
+  int mysize;
 	mysize = Cudd_ReadNodeCount(manager);
-        fprintf(stdout, "size: %8d\n", mysize);	
+  fprintf(stdout, "size: %8d\n", mysize);	
 	// ECE/CS 5740/6740 -- Counting BDD size (added 04/19/2021 by Cunxi Yu) end
 	Bnet_bddDump (manager, net, string1, 0, 0);
 
@@ -171,16 +619,16 @@ int main (int argc, char **argv) {
 	(void) Cudd_Quit (manager);
 
   
-	/* print running statistics */
-	/* (void) printf("total time = %s\n",
-	   util_print_time(util_cpu_time() - option->initialTime));
-	   freeOption(option);
-	   util_print_cpu_stats(stdout);*/
+	// print running statistics 
+	// (void) printf("total time = %s\n",
+	//   util_print_time(util_cpu_time() - option->initialTime));
+	//   freeOption(option);
+	//   util_print_cpu_stats(stdout);
 	   
 
 	return 1;
 }
-
+*/
 
 /*
  * simulated annealing algorithm 
@@ -193,11 +641,12 @@ char** simulated_annealing(char** curr_order, int num_pis) {
 	}
   
 	fprintf (stdout, "\n in SA, after re-ordering: \n");
+  /*
   curr_order[0] = "b";
   curr_order[1] = "c";
   curr_order[2] = "d";
   curr_order[3] = "a";
-
+  */
   return curr_order;
 }
 
@@ -952,10 +1401,11 @@ ntrReadOptions (
 		exit (-1);
 	}
 
+  /*
 	if (option->verb >= 0)
 	{
 		(void) printf ("# %s\n", NTR_VERSION);
-		/* echo command line and arguments */
+		// echo command line and arguments
 		(void) printf ("#");
 		for (i = 0; i < argc; i++)
 		{
@@ -966,7 +1416,7 @@ ntrReadOptions (
 		Cudd_PrintVersion (stdout);
 		(void) fflush (stdout);
 	}
-
+  */
 	return;
 
 usage:				/* convenient goto */
