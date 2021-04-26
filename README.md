@@ -19,10 +19,10 @@ Type make
 
 
 ## Run
-- Simulated annealing is implemented. Users could specify the desired paramenters in blif2bdd/main.c and recompile.
+Simulated annealing is implemented. Users could specify the desired paramenters in blif2bdd/main.c and recompile.
 ```bash
-
-./BDDs >>> Including packages built on CUDD 2.5; converting BLIF (AIG) into BDDs w.r.t to input variable order defined in BLIF
+cd ./BDDs/blifbdd-package/blif2bdd
+./blif2bdd ../../blif-benchmarks/adder8.blif
 
 ```
 
