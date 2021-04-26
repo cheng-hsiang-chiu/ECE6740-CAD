@@ -1,7 +1,11 @@
 # BDDs re-ordering
 
 
+## What is this project about?
 This is a final project of ECE6740-CAD. The purpose of this project is to find a variable ordering that results in a minimal number of node sizes of the BDDs.
+
+
+
 
 ```bash
 
