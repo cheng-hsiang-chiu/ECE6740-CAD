@@ -52,10 +52,12 @@ static int ntrReadTree ARGS ((DdManager * dd, char *treefile, int nvars));
 static void DynamicReordering ARGS ((DdManager *dd));
 
 char** simulated_annealing(char** curr_order, int num_pis);
-static double TEMPERATURE = 10000.0;
+static double TEMPERATURE = 1000.0;
 static double FROZEN_TEMPERATURE = 0.1;
-static double DEGRADE = 0.99;
+static double DEGRADE = 0.9;
 static int MAX_ITERATION_PER_TEMPERATURE = 1000;
+static int previous_strategy = 0;
+
 
 void initialize(
   int argc, 
@@ -85,6 +87,10 @@ void rotate_ordering(
 void swap_half_half(
   std::vector<std::string>& prop_ordering);
 
+void shuffle_ranges(
+  std::vector<std::string>& prop_ordering);
+
+
 
 int main (int argc, char** argv) {
   std::vector<std::string> best_ordering;
@@ -113,7 +119,7 @@ int main (int argc, char** argv) {
 
   while(TEMPERATURE > FROZEN_TEMPERATURE) {
     for (int iter = 0; iter < MAX_ITERATION_PER_TEMPERATURE; ++iter) { 
-
+      fprintf(stdout, "TEMPERATURE = %f\n", TEMPERATURE);
       generate_prop_ordering(prop_ordering);
       prop_node_size = calculate_node_size(argc, argv, prop_ordering);
 
@@ -199,22 +205,66 @@ void rotate_ordering(
 }
 
 
+void shuffle_ranges(
+  std::vector<std::string>& prop_ordering) {
+  
+  int a = std::rand()%(prop_ordering.size());
+  int b = std::rand()%(prop_ordering.size());
+
+  while (a == b) {
+    b = std::rand()%(prop_ordering.size());
+  }
+
+  if (a > b) {
+    std::random_shuffle(prop_ordering.begin() + b,
+                        prop_ordering.begin() + a);
+  }
+  else {
+    std::random_shuffle(prop_ordering.begin() + a,
+                        prop_ordering.begin() + b);
+  }
+}
+
+
 // Generate proposed ordering
 void generate_prop_ordering(
   std::vector<std::string>& prop_ordering) {
 
-  switch(std::rand()%2) {
-    case 0:
-      swap_two_ordering(prop_ordering);
-      break;
+  int random_number = std::rand()%6;
 
+  while(random_number == previous_strategy) {
+    if ((random_number == 4) || (random_number == 5)) {
+      random_number = std::rand()%6;
+    }
+    else {
+      break;
+    }
+  }
+
+  previous_strategy = random_number;  
+
+  switch(random_number) {
+    case 0:
     case 1:
-      rotate_ordering(prop_ordering);
+      shuffle_ranges(prop_ordering);
+      fprintf(stdout, "\nshuffle_ranges");
       break;
 
     case 2:
+    case 3:
+      swap_two_ordering(prop_ordering);
+      fprintf(stdout, "\nswap_two_ordering");
+      break;
+
+    case 4:
+      rotate_ordering(prop_ordering);
+      fprintf(stdout, "\nrotate_ordering");
+      break;
+
+    case 5:
       swap_half_half(prop_ordering);
-      break; 
+      fprintf(stdout, "\nswap_half_half");
+      break;
   }
 }
 
