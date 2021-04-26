@@ -2,7 +2,7 @@
 
 
 ## What is this project about?
-This is a final project of ECE6740-CAD. The purpose of this project is to find a variable ordering that results in a minimal number of node sizes of the BDDs.  
+This is a final project of ECE6740-CAD. The purpose of this project is to find a variable ordering that results in a minimal number of node sizes of the BDDs. Simulated annealing is implemented. Users could specify the desired paramenters in main.c and recompile. 
 
 
 ## Repository structure
@@ -25,7 +25,6 @@ Type make
 
 
 ## Run
-Simulated annealing is implemented. Users could specify the desired paramenters in blif2bdd/main.c and recompile.
 ```bash
 cd ./BDDs/blifbdd-package/blif2bdd
 ./blif2bdd ../../blif-benchmarks/adder8.blif
