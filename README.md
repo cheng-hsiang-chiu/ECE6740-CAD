@@ -25,3 +25,6 @@ Type make
 ./BDDs >>> Including packages built on CUDD 2.5; converting BLIF (AIG) into BDDs w.r.t to input variable order defined in BLIF
 
 ```
+
+## Experimental results
+Please refer to the <a href="https://github.com/berkeley-abc/abc">slide</a>; for more information.
