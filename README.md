@@ -7,6 +7,9 @@ This is a final project of ECE6740-CAD. The purpose of this project is to find a
 
 
 
+## Compile steps
+
+
 ```bash
 
 ./BDDs >>> Including packages built on CUDD 2.5; converting BLIF (AIG) into BDDs w.r.t to input variable order defined in BLIF
