@@ -19,20 +19,15 @@ This is a final project of ECE6740-CAD. The purpose of this project is to find a
 ## Compile steps
 Tested with G++, Ubuntu 20.04
 
-Step 1)
-Make sure the cudd_location file containes one single line with the full path to the cudd package 2.5.0
-
-Step 2)
-Type make distclean
-
-Step 3) 
-Type make
+```bash
+make distclean
+make
+```
 
 
 ## Run
 ```bash
-cd ./BDDs/blifbdd-package/blif2bdd
-./blif2bdd ../../blif-benchmarks/adder8.blif
+./bin/BDD ./test/test-L14.blif
 
 ```
 
