@@ -15,4 +15,4 @@ jobs:
     - name: build
       run: make
     - name: test
-      run: cd bin ; ./BDD ../test/testXOR.blif --output-on-failure
+      run: cd bin ; ./BDD ../test/testXOR.blif
