@@ -5,6 +5,12 @@
 This is a final project of ECE6740-CAD. The purpose of this project is to find a variable ordering that results in a minimal number of node sizes of the BDDs.  
 
 
+## Repository structure
+- 3rd-party : cudd package
+- src : source files
+- test : testing examples
+- bench : benchmarks
+- bin : executable file
 
 
 ## Compile steps
