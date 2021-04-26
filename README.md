@@ -27,4 +27,4 @@ Type make
 ```
 
 ## Experimental results
-Please refer to the <a href="https://github.com/berkeley-abc/abc">slide</a> for more information.
+Please refer to the <a href="https://github.com/cheng-hsiang-chiu/ECE6740-CAD/slide.pdf">slide</a> for more information.
