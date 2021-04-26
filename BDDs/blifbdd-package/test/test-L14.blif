@@ -1,8 +1,0 @@
-.model test-L14.eqn
-.inputs a b c d
-.outputs f
-.names a b c d f
-11-- 1
-0-1- 1
--101 1
-.end

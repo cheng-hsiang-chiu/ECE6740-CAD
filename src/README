@@ -1,0 +1,13 @@
+----------
+  How to 
+----------
+# file.blif must be under blif2bdd folder or else will cause error.
+# Use different reordering
+blif2bdd 1.blif
+
+# Use ordering from a file
+blif2bdd -order 1.ord 1.blif
+
+# Convert dot file to postscript file
+dotps 1.blif.dot
+

@@ -1,0 +1,43 @@
+.model add2_temp_1
+.outputs C_0 C_1 C_2 
+.inputs A_0 A_1 B_0 B_1 
+.names  xid350 C_2
+1 1
+.names  xid348 C_1
+1 1
+.names  xid343 C_0
+1 1
+.names  xid347 xid349 xid350
+00 0
+.names  xid338_1 xid347
+1 1
+.names  A_0 B_0 xid338_0
+11 1
+.names  A_1 B_1 xid338_1
+11 1
+.names  xid342 xid346 xid349
+11 1
+.names  xid338_0 xid342
+1 1
+.names  xid339_1 xid346
+1 1
+.names  A_0 B_0 xid339_0
+00 0
+.names  A_1 B_1 xid339_1
+00 0
+.names  xid342 xid345 xid348
+10 1
+01 1
+.names  xid337_1 xid345
+1 1
+.names  A_0 B_0 xid337_0
+10 1
+01 1
+.names  A_1 B_1 xid337_1
+10 1
+01 1
+.names  xid340 xid343
+1 1
+.names  xid337_0 xid340
+1 1
+.end
