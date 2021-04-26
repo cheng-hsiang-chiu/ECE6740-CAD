@@ -1,6 +1,7 @@
-# ECE-CS-5740-6740-CAD
+# BDDs re-ordering
 
-## Final Project Instructions
+
+## Final Project Instruction
 
 ```bash
 
