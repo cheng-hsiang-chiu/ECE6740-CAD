@@ -2,7 +2,7 @@
 
 
 ## What is this project about?
-This is a final project of ECE6740-CAD. The purpose of this project is to find a variable ordering that results in a minimal number of node sizes of the BDDs. Simulated annealing is implemented. Users could specify the desired paramenters in main.c and recompile. 
+This is a final project of ECE6740-CAD. The purpose of this project is to find a variable ordering that results in a minimal number of node sizes of the BDDs. Simulated annealing is implemented. Users could specify the desired paramenters(TEMPERATURE, FRONZEN_TEMPERATURE, DEGRADE, MAX_ITERATION_PER_TEMPERATURE) in main.c and recompile. 
 
 
 ## Repository structure
