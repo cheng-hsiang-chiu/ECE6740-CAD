@@ -11,7 +11,7 @@ This is a final project of ECE6740-CAD. The purpose of this project is to find a
 ## Repository structure
 - 3rd-party : cudd package
 - src : source files
-- test : testing examples
+- test : test examples
 - bench : benchmarks
 - bin : executable file
 
