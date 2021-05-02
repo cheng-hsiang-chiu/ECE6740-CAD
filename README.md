@@ -17,8 +17,6 @@ This is a final project of ECE6740-CAD. The purpose of this project is to find a
 
 
 ## Compile steps
-Tested with G++, Ubuntu 20.04
-
 ```bash
 make distclean
 make
